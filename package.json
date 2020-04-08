@@ -1,0 +1,22 @@
+{
+  "name": "goscatalog_bot",
+  "version": "0.0.1",
+  "description": "Notification bot for goscatalog",
+  "main": "dist/app.js",
+  "author": "bvanyushin",
+  "license": "MIT",
+  "scripts": {
+    "start": "tsc && node dist/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@types/node-fetch": "^2.5.5",
+    "@types/node-telegram-bot-api": "^0.40.2",
+    "@types/sqlite3": "^3.1.6",
+    "node-fetch": "^2.6.0",
+    "node-telegram-bot-api": "^0.40.0",
+    "sqlite3": "^4.1.1",
+    "tslint": "^6.1.1",
+    "typescript": "^3.8.3"
+  }
+}
