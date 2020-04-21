@@ -3,10 +3,17 @@ import { CronJob } from "cron";
 import { compileIssue } from "./issue";
 import { getBot } from "./bot";
 
-const token = "";
-const debugMode = true;
+const token = process.env.API_TOKEN;
+
+if (!token) {
+  throw new Error(
+    "No api token is provided, please set env variable API_TOKEN."
+  );
+}
 
 async function doStuff() {
+  const debugMode = process.env.ENVIRONMENT === "DEV";
+
   await initDatabase();
   const bot = getBot(token, debugMode);
 

@@ -1,13 +1,17 @@
 import { verbose } from "sqlite3";
 const sqlite3 = verbose();
-const DATABASE_PATH = process.env.dbpath || "./db/botdb.db";
-const notifyAdmin = (msg) => console.error(msg)
+const DATABASE_PATH = process.env.DB_PATH;
+if (!DATABASE_PATH) {
+  throw new Error("No path to database is provided, please set env variable DB_PATH.")
+}
+const notifyAdmin = (msg) => console.warn(msg);
 
 const createDatabase = () => {
-  notifyAdmin('New database needed, check backup please');
+  notifyAdmin("New database needed, check backup please");
   let db = new sqlite3.Database(DATABASE_PATH, (err) => {
     if (err) {
       notifyAdmin(err);
+      return;
     }
     db.run("CREATE TABLE users(user_id text)");
     console.log(`Database created on path ${DATABASE_PATH}.`);
@@ -25,8 +29,8 @@ export const initDatabase: () => void = async () => {
   const db = new sqlite3.Database(
     DATABASE_PATH,
     sqlite3.OPEN_READONLY,
+    // any because of typing error in library
     (err: any) => {
-      // any because of typing error in library
       if (err) {
         if (err.code === "SQLITE_CANTOPEN") {
           console.log(`Unable to find database on path ${DATABASE_PATH}.`);
