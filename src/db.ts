@@ -1,4 +1,10 @@
 import { verbose } from "sqlite3";
+
+interface DbResponse {
+  message: string;
+  status: 'success' | 'failed';
+}
+
 const sqlite3 = verbose();
 const DATABASE_PATH = process.env.DB_PATH;
 if (!DATABASE_PATH) {
@@ -66,20 +72,76 @@ export const readUsers: () => Promise<string[]> = async () => {
   return p;
 };
 
-export const saveUser: (id: string) => Promise<void> = async (id) => {
-  const p: Promise<string[]> = new Promise((resolve, reject) => {
+const checkUserExists: (id: number) => Promise<boolean> = async (id) => {
+  const p: Promise<boolean> = new Promise((resolve, reject) => {
+    const db = new sqlite3.Database(DATABASE_PATH);
+    db.all("SELECT user_id FROM users WHERE user_id=" + id.toString(), [], (err, rows) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(rows.length > 0);
+    });
+    db.close();
+  });
+
+  return p;
+}
+
+
+export const subscribe: (id: number) => Promise<DbResponse> = async (id) => {
+  const isUserExists = await checkUserExists(id);
+
+  return new Promise((resolve, reject) => {
+    if (isUserExists) {
+      resolve({
+        message: 'Вы уже подписаны на рассылку',
+        status: 'failed'
+      })
+    }
+
     const db = new sqlite3.Database(DATABASE_PATH);
 
     db.run("INSERT INTO users(user_id) VALUES(?)", id, function (err) {
       if (err) {
         reject(err);
       }
-      resolve();
+      resolve({
+        status: 'success',
+        message: 'Вы успешно подписались на рассылку'
+      });
     });
     db.close();
   });
 };
 
-export const removeUser: (id: string) => void = (id: string) => {
-  console.error("not implemented yet");
+export const unsubscribe: (id: number) => Promise<DbResponse> = async (id: number) => {
+  const isUserExists = await checkUserExists(id);
+
+  return new Promise((resolve, reject) => {
+    if (!isUserExists) {
+      resolve({
+        message: 'Вы не подписаны на рассылку',
+        status: 'failed'
+      })
+    }
+
+    const db = new sqlite3.Database(DATABASE_PATH);
+
+    db.run("DELETE FROM users WHERE user_id=" + id.toString(), function (err) {
+      if (err) {
+        reject(err);
+      }
+      resolve({
+        status: 'success',
+        message: 'Вы успешно отписались от рассылки'
+      });
+    });
+    db.close();
+  });
 };
+
+export const checkSubscribtion: (id: number) => Promise<DbResponse> = async (id) => checkUserExists(id)
+  .then(isUserExists => ({
+    message: isUserExists ? 'Вы уже подписаны на рассылку' : 'Вы еще не подписаны на рассылку',
+    status: 'success'
+  }))

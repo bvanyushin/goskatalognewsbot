@@ -1,6 +1,6 @@
 import TelegramBot from "node-telegram-bot-api";
 import { constants } from "./constants";
-import { saveUser } from "./db";
+import { subscribe, unsubscribe, checkSubscribtion } from "./db";
 import { getLastMessage, getSubscribtionMessage, getHelpMessage } from "./message"
 
 export const getBot: (token: string, debugMode?: boolean) => TelegramBot = (
@@ -16,9 +16,9 @@ export const getBot: (token: string, debugMode?: boolean) => TelegramBot = (
     bot.sendMessage(msg.from.id, botMessage);
   });
 
-  bot.onText(/\/unsubscribe/, function (msg) {
-    // unsubscribe(msg.from.id);
-    bot.sendMessage(msg.from.id, "Сорян, еще не работает");
+  bot.onText(/\/unsubscribe/, async function (msg) {
+    const result = await unsubscribe(msg.from.id);
+    bot.sendMessage(msg.from.id, result.message);
   });
 
   bot.onText(/\/help/, function (msg) {
@@ -26,13 +26,18 @@ export const getBot: (token: string, debugMode?: boolean) => TelegramBot = (
   });
 
   bot.onText(/\/subscribe/, async function (msg) {
-    await saveUser(msg.from.id.toString());
-    bot.sendMessage(msg.from.id, "Вы успешно подписались");
+    const result = await subscribe(msg.from.id);
+    bot.sendMessage(msg.from.id, result.message);
   });
 
   bot.onText(/\/last/, async function (msg) {
     const botMessage = await getLastMessage();
     bot.sendMessage(msg.from.id, botMessage, { parse_mode: "HTML" });
+  });
+
+  bot.onText(/\/status/, async function (msg) {
+    const result = await checkSubscribtion(msg.from.id);
+    bot.sendMessage(msg.from.id, result.message);
   });
 
   if (debugMode) {

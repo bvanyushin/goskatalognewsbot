@@ -1,4 +1,4 @@
-import { readUsers, removeUser, saveUser } from "./db";
+import { readUsers } from "./db";
 import { getSubscribtionMessage } from "./message";
 
 export const compileIssue = async () => {
