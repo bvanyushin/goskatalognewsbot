@@ -1,15 +1,12 @@
 import { initDatabase } from "./db";
+import {checkEnvParams} from './checkEnvParams';
 import { CronJob } from "cron";
 import { compileIssue } from "./issue";
 import { getBot } from "./bot";
 
-const token = process.env.API_TOKEN;
+checkEnvParams();
 
-if (!token) {
-  throw new Error(
-    "No api token is provided, please set env variable API_TOKEN."
-  );
-}
+const token = process.env.API_TOKEN;
 
 async function doStuff() {
   await initDatabase();

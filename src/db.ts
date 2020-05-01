@@ -7,9 +7,7 @@ interface DbResponse {
 
 const sqlite3 = verbose();
 const DATABASE_PATH = process.env.DB_PATH;
-if (!DATABASE_PATH) {
-  throw new Error("No path to database is provided, please set env variable DB_PATH.")
-}
+
 const notifyAdmin = (msg) => console.warn(msg);
 
 const createDatabase = () => {
