@@ -13,29 +13,6 @@ interface GoscatalogPost {
 const { checkPeriod } = constants;
 const BIG_PERIOD = 1000;
 
-
-export const getHelpMessage: (debugMode?: boolean) => string = (debugMode = false) => {
-  const helpMessage =
-    "Бот предназначен для того, чтобы присылать регулярные " +
-    "оповещения о новостях госкаталога:\n" +
-    "/help - выведет сообщение со списком всех команд\n" +
-    "/last - пришлет последнюю опубликованную новость и ссылку на нее\n" +
-    "/status - проверит текущий статус подписки\n" +
-    "/subscribe - подпишет на ежедневное оповещение об изменениях списка новостей\n" +
-    "/unsubscribe - отменит подписку\n" +
-    `${
-      debugMode
-        ? "/debug_issue подготовит и пришлет сообщение одного выпуска рассылки\n"
-        : ""
-    }` +
-    `${debugMode ? "/debug_send отправит выпуск рассылки\n" : ""}` +
-    `${
-      debugMode ? "/debug_constants отправит набор используемых констант\n" : ""
-    }`;
-
-  return helpMessage;
-};
-
 const getIntro: (period?: number) => string = (period = checkPeriod) => {
   const defaultMessage: string = `За последние ${period} дней`;
   if (period % 10 > 4) {

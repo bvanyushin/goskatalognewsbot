@@ -12,18 +12,12 @@ if (!token) {
 }
 
 async function doStuff() {
-  const debugMode = process.env.ENVIRONMENT === "DEV";
-
   await initDatabase();
-  const bot = getBot(token, debugMode);
+  const bot = getBot(token);
 
   const sendIssue = async () => {
     const issue = await compileIssue();
     issue.mailList.forEach(userId => bot.sendMessage(userId, issue.message))
-  }
-
-  if (debugMode) {
-    bot.onText(/\/debug_send/, sendIssue);
   }
 
   new CronJob(
