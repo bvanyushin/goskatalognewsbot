@@ -1,3 +1,3 @@
 export const constants = {
-  checkPeriod: 10,
+  checkPeriod: process.env.DAYS_TO_CHECK ? Number(process.env.DAYS_TO_CHECK) : 10,
 };
